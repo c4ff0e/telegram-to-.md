@@ -1,0 +1,44 @@
+import asyncio
+import keyboards
+import md_helper
+from aiogram import Bot, Dispatcher, Router, F, types
+from aiogram.types import Message
+from aiogram.client.bot import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.filters import Command, StateFilter
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+import os
+from dotenv import load_dotenv
+import logging
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+
+bot = Bot(token=os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+dp = Dispatcher()
+language = 'ru'
+
+class Converter(StatesGroup):
+    choice_md = State()
+    choice_txt = State()
+    wait_for_messages = State()
+
+@dp.message(Command("start"))
+async def start(message: Message):
+    await message.answer(
+"""
+<b>Telegram to .MD 🗨️->🗒️</b>
+    
+Лёгкий экспорт сообщений в текстовый файл.
+Чтобы начать - нажмите на кнопку ниже.
+"""
+    , reply_markup=keyboards.start_kb)
+    
+
+async def main():
+    dp.include_router(md_helper.router)
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
