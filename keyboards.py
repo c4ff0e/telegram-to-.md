@@ -8,13 +8,12 @@ start_kb = InlineKeyboardMarkup(
     )
 cancel_kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Отменить", callback_data= "cancel")],
+            [InlineKeyboardButton(text="Отмена", callback_data= "cancel")],
         ]
     )
 add_more_kb = InlineKeyboardMarkup(
         inline_keyboard=[
             {InlineKeyboardButton(text="Экспорт", callback_data= "export")},
-            [InlineKeyboardButton(text="Добавить ещё", callback_data= "add_more")],
-            [InlineKeyboardButton(text="Отменить", callback_data= "cancel")],
+            [InlineKeyboardButton(text="Отмена", callback_data= "cancel")],
         ]
     )

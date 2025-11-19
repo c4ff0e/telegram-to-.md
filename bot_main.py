@@ -1,6 +1,5 @@
 import asyncio
 import keyboards
-import md_helper
 from aiogram import Bot, Dispatcher, Router, F, types
 from aiogram.types import Message
 from aiogram.client.bot import DefaultBotProperties
@@ -13,17 +12,16 @@ from dotenv import load_dotenv
 import logging
 load_dotenv()
 
+class Converter(StatesGroup):
+    choice_md = State()
+    choice_txt = State()
+    wait_for_messages_md = State()
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 language = 'ru'
 router = Router()
-
-class Converter(StatesGroup):
-    choice_md = State()
-    choice_txt = State()
-    wait_for_messages_md = State()
 
 @dp.message(Command("start"))
 async def start(message: Message):
@@ -44,6 +42,7 @@ async def cancel(callback: types.CallbackQuery, state: FSMContext):
     await start(callback.message)
 
 async def main():
+    import md_helper
     dp.include_router(md_helper.router)
     await dp.start_polling(bot)
 
