@@ -18,11 +18,12 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 language = 'ru'
+router = Router()
 
 class Converter(StatesGroup):
     choice_md = State()
     choice_txt = State()
-    wait_for_messages = State()
+    wait_for_messages_md = State()
 
 @dp.message(Command("start"))
 async def start(message: Message):
@@ -35,6 +36,12 @@ async def start(message: Message):
 """
     , reply_markup=keyboards.start_kb)
     
+
+@dp.callback_query(F.data == "cancel")
+async def cancel(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.clear()
+    await start(callback.message)
 
 async def main():
     dp.include_router(md_helper.router)
