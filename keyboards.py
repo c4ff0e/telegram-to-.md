@@ -17,3 +17,9 @@ add_more_kb = InlineKeyboardMarkup(
             [InlineKeyboardButton(text="Отмена", callback_data= "cancel")],
         ]
     )
+
+export_again_kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="Новый экспорт", callback_data= "start")],
+        ]
+)

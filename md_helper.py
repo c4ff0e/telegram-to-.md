@@ -11,6 +11,7 @@ from aiogram.types import FSInputFile
 from bot_main import Converter
 import datetime
 import random
+import os
 router = Router()
 
 @router.callback_query(F.data == "to_md")
@@ -121,7 +122,7 @@ async def export_md(callback: types.CallbackQuery, state: FSMContext):
             to_export.append(f"[Кружок]\n")
         #голосовое
         if message.voice:
-            to_export.append(f"[Кружок]\n")
+            to_export.append(f"[Голосовое сообщение]\n")
         #стикер
         if message.sticker:
             to_export.append(f"[Стикер]: {message.sticker.emoji}\n")
@@ -130,7 +131,7 @@ async def export_md(callback: types.CallbackQuery, state: FSMContext):
             to_export.append(f"[Контакт]: *{message.contact.phone_number}*")
         #чеклист
         if message.checklist:
-            to_export.append(f"[Список]:\n**{message.checkkist.title}**")
+            to_export.append(f"[Список]:\n**{message.checkist.title}**")
             for ChecklistTask in message.checklist.tasks:
                 to_export.append(f"- {ChecklistTask.text}\n")
         # опрос (господи блять!)
@@ -173,5 +174,12 @@ async def export_md(callback: types.CallbackQuery, state: FSMContext):
     with open (f"{filename}", "w", encoding="utf-8") as f:
         f.write(f"Telegram to .md экспорт {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n{md_text}")
     file = FSInputFile(filename)
-    await message.answer_document(file)
-    await callback.answer()
+    try:
+        await callback.message.answer_document(file, caption="Экспортировано!\n\nЖелаете сделать ещё один экспорт?", reply_markup=keyboards.export_again_kb)
+    except:
+        await callback.message.answer("Экспорт не удался. Попробуйте экспортировать меньше сообщений.")
+    finally:
+        await callback.answer()
+        await state.clear()
+        if os.path.exists(filename):
+            os.remove(filename)

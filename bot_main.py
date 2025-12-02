@@ -34,6 +34,12 @@ async def start(message: Message):
 """
     , reply_markup=keyboards.start_kb)
     
+@dp.callback_query(F.data == "start")
+async def startagain(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.clear()
+    await start(callback.message)
+
 
 @dp.callback_query(F.data == "cancel")
 async def cancel(callback: types.CallbackQuery, state: FSMContext):
